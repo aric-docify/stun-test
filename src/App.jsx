@@ -4,9 +4,12 @@ import { TestButton } from './components/TestButton'
 import { ServerList } from './components/ServerList'
 import { Stats } from './components/Stats'
 
+const P2PF_API = 'https://www.p2pf.cn/api/turn-credential?uid=xu3gy&scene=send_file'
+
 function App() {
   const [stunServers, setStunServers] = useState([])
   const [turnServers, setTurnServers] = useState([])
+  const [dynamicTurnServers, setDynamicTurnServers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -27,7 +30,32 @@ function App() {
       })
   }, [])
 
-  const { stunResults, turnResults, isTesting, runTests, resetTests } = useServerTest({ stunServers, turnServers })
+  const allTurnServers = [...turnServers, ...dynamicTurnServers]
+  const { stunResults, turnResults, isTesting, runTests, resetTests } = useServerTest({ stunServers, turnServers: allTurnServers })
+
+  const fetchDynamicTurn = async () => {
+    try {
+      const res = await fetch(P2PF_API, {
+        headers: {
+          'company-source': 'apply7',
+          'referer': 'https://www.p2pf.cn/'
+        }
+      })
+      const data = await res.json()
+      if (data.urls && data.username && data.password) {
+        const servers = data.urls.map(url => ({
+          name: `P2PF (${url.split(':')[1]})`,
+          url: url,
+          username: data.username,
+          credential: data.password,
+          ttl: data.ttl_seconds
+        }))
+        setDynamicTurnServers(servers)
+      }
+    } catch (err) {
+      console.error('Failed to fetch TURN credentials:', err)
+    }
+  }
 
   if (loading) {
     return (
@@ -60,7 +88,7 @@ function App() {
               <TestButton
                 onClick={runTests}
                 isLoading={isTesting}
-                disabled={stunServers.length === 0 && turnServers.length === 0}
+                disabled={stunServers.length === 0 && allTurnServers.length === 0}
               />
               {hasResults && !isTesting && (
                 <button
@@ -70,6 +98,13 @@ function App() {
                   重置
                 </button>
               )}
+              <button
+                className="btn btn-secondary"
+                onClick={fetchDynamicTurn}
+                disabled={isTesting}
+              >
+                获取动态 TURN 凭证
+              </button>
             </div>
 
             {/* STUN Servers Section */}
@@ -81,9 +116,9 @@ function App() {
             )}
 
             {/* TURN Servers Section */}
-            {turnServers.length > 0 && (
+            {allTurnServers.length > 0 && (
               <div className="mb-6">
-                <h2 className="text-lg font-semibold mb-3">TURN Servers</h2>
+                <h2 className="text-lg font-semibold mb-3">TURN Servers ({dynamicTurnServers.length > 0 && '含动态凭证'})</h2>
                 <ServerList results={turnResults} type="turn" />
               </div>
             )}
