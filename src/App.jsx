@@ -6,13 +6,17 @@ import { Stats } from './components/Stats'
 
 const P2PF_API = '/api/p2pf/turn-credential?uid=xu3gy&scene=send_file'
 
+function generateUid() {
+  return Math.random().toString(36).substring(2, 7)
+}
+
 function App() {
   const [stunServers, setStunServers] = useState([])
   const [turnServers, setTurnServers] = useState([])
   const [dynamicTurnServers, setDynamicTurnServers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [uid, setUid] = useState('xu3gy')
+  const [uid, setUid] = useState(generateUid())
 
   useEffect(() => {
     fetch('/servers.json')
