@@ -1,0 +1,28 @@
+{
+  "servers": [
+    {
+      "name": "52doc STUN",
+      "url": "stun:52doc.com:3478"
+    },
+    {
+      "name": "小米 STUN",
+      "url": "stun:stun.miwifi.com:3478"
+    },
+    {
+      "name": "腾讯 STUN",
+      "url": "stun:stun.qq.com:3478"
+    },
+    {
+      "name": "Google STUN",
+      "url": "stun:stun.l.google.com:19302"
+    },
+    {
+      "name": "Cloudflare STUN",
+      "url": "stun:stun.cloudflare.com:3478"
+    },
+    {
+      "name": "Twilio STUN",
+      "url": "stun:global.stun.twilio.com:3478"
+    }
+  ]
+}
