@@ -4,7 +4,7 @@ import { TestButton } from './components/TestButton'
 import { ServerList } from './components/ServerList'
 import { Stats } from './components/Stats'
 
-const P2PF_API = 'https://www.p2pf.cn/api/turn-credential?uid=xu3gy&scene=send_file'
+const P2PF_API = '/api/p2pf/turn-credential?uid=xu3gy&scene=send_file'
 
 function App() {
   const [stunServers, setStunServers] = useState([])
