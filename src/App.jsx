@@ -10,7 +10,7 @@ function App() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch('/stun-test/servers.json')
+    fetch('/servers.json')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load servers config')
         return res.json()
