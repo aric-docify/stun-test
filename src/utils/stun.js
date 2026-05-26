@@ -67,6 +67,17 @@ export function testStunServer(stunUrl, timeout = 5000) {
                 publicPort: parseInt(portMatch[1], 10),
                 error: null
               })
+            } else if (candidate.includes('host') && !resolved) {
+              // For host candidate, also record but mark as local IP
+              // This indicates STUN server is reachable, but NAT traversal may fail
+              const endTime = performance.now()
+              finish({
+                success: true,
+                latency: Math.round(endTime - startTime),
+                publicIP: ipMatch[0] + ' (本地)',
+                publicPort: parseInt(portMatch[1], 10),
+                error: null
+              })
             }
           }
         }
