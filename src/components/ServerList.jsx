@@ -1,6 +1,6 @@
 import { ServerItem } from './ServerItem'
 
-export function ServerList({ results }) {
+export function ServerList({ results, type = 'stun' }) {
   if (results.length === 0) {
     return (
       <div className="text-center py-8 text-base-content/60">
@@ -17,8 +17,9 @@ export function ServerList({ results }) {
             <th>服务器名称</th>
             <th>状态</th>
             <th>延迟</th>
-            <th>公网 IP</th>
+            <th>{type === 'turn' ? '中继 IP' : '公网 IP'}</th>
             <th>端口</th>
+            {type === 'turn' && <th>数据传输</th>}
           </tr>
         </thead>
         <tbody>
