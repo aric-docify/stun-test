@@ -12,6 +12,7 @@ function App() {
   const [dynamicTurnServers, setDynamicTurnServers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [uid, setUid] = useState('xu3gy')
 
   useEffect(() => {
     fetch('/servers.json')
@@ -35,7 +36,7 @@ function App() {
 
   const fetchDynamicTurn = async () => {
     try {
-      const res = await fetch(P2PF_API, {
+      const res = await fetch(`/api/p2pf/turn-credential?uid=${uid}&scene=send_file`, {
         headers: {
           'company-source': 'apply7',
           'referer': 'https://www.p2pf.cn/'
@@ -98,13 +99,29 @@ function App() {
                   重置
                 </button>
               )}
+            </div>
+
+            {/* Dynamic TURN Config */}
+            <div className="flex gap-2 items-center mb-4">
+              <input
+                type="text"
+                placeholder="输入 UID"
+                className="input input-bordered w-40"
+                value={uid}
+                onChange={(e) => setUid(e.target.value)}
+              />
               <button
                 className="btn btn-secondary"
                 onClick={fetchDynamicTurn}
-                disabled={isTesting}
+                disabled={isTesting || !uid}
               >
                 获取动态 TURN 凭证
               </button>
+              {dynamicTurnServers.length > 0 && (
+                <span className="text-success text-sm">
+                  ✓ 已获取 {dynamicTurnServers.length} 个 TURN 服务器
+                </span>
+              )}
             </div>
 
             {/* STUN Servers Section */}
