@@ -1,5 +1,5 @@
 {
-  "servers": [
+  "stunServers": [
     {
       "name": "52doc STUN",
       "url": "stun:52doc.com:3478"
@@ -7,10 +7,6 @@
     {
       "name": "小米 STUN",
       "url": "stun:stun.miwifi.com:3478"
-    },
-    {
-      "name": "腾讯 STUN",
-      "url": "stun:stun.qq.com:3478"
     },
     {
       "name": "Google STUN",
@@ -23,6 +19,20 @@
     {
       "name": "Twilio STUN",
       "url": "stun:global.stun.twilio.com:3478"
+    }
+  ],
+  "turnServers": [
+    {
+      "name": "OpenRelay",
+      "url": "turn:openrelay.metered.ca:80",
+      "username": "openrelayproject",
+      "credential": "openrelayproject"
+    },
+    {
+      "name": "OpenRelay TLS",
+      "url": "turns:openrelay.metered.ca:443",
+      "username": "openrelayproject",
+      "credential": "openrelayproject"
     }
   ]
 }
