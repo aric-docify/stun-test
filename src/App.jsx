@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { useStunTest } from './hooks/useStunTest'
+import { useServerTest } from './hooks/useServerTest'
 import { TestButton } from './components/TestButton'
 import { ServerList } from './components/ServerList'
 import { Stats } from './components/Stats'
 
 function App() {
-  const [servers, setServers] = useState([])
+  const [stunServers, setStunServers] = useState([])
+  const [turnServers, setTurnServers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -16,7 +17,8 @@ function App() {
         return res.json()
       })
       .then(data => {
-        setServers(data.servers || [])
+        setStunServers(data.stunServers || [])
+        setTurnServers(data.turnServers || [])
         setLoading(false)
       })
       .catch(err => {
@@ -25,7 +27,7 @@ function App() {
       })
   }, [])
 
-  const { results, isTesting, runTests, resetTests } = useStunTest(servers)
+  const { stunResults, turnResults, isTesting, runTests, resetTests } = useServerTest({ stunServers, turnServers })
 
   if (loading) {
     return (
@@ -45,20 +47,22 @@ function App() {
     )
   }
 
+  const hasResults = stunResults.length > 0 || turnResults.length > 0
+
   return (
     <div className="min-h-screen bg-base-200 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
-            <h1 className="card-title text-2xl mb-6">STUN 服务器测试工具</h1>
+            <h1 className="card-title text-2xl mb-6">STUN/TURN 服务器测试工具</h1>
 
             <div className="card-actions mb-6">
               <TestButton
                 onClick={runTests}
                 isLoading={isTesting}
-                disabled={servers.length === 0}
+                disabled={stunServers.length === 0 && turnServers.length === 0}
               />
-              {results.length > 0 && !isTesting && (
+              {hasResults && !isTesting && (
                 <button
                   className="btn btn-outline"
                   onClick={resetTests}
@@ -68,18 +72,33 @@ function App() {
               )}
             </div>
 
-            <ServerList results={results} />
+            {/* STUN Servers Section */}
+            {stunServers.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">STUN Servers</h2>
+                <ServerList results={stunResults} type="stun" />
+              </div>
+            )}
 
-            {results.length > 0 && !isTesting && (
+            {/* TURN Servers Section */}
+            {turnServers.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-3">TURN Servers</h2>
+                <ServerList results={turnResults} type="turn" />
+              </div>
+            )}
+
+            {/* Combined Stats */}
+            {hasResults && !isTesting && (
               <div className="mt-6">
-                <Stats results={results} />
+                <Stats stunResults={stunResults} turnResults={turnResults} />
               </div>
             )}
           </div>
         </div>
 
         <div className="text-center mt-6 text-base-content/60 text-sm">
-          使用 WebRTC 测试 STUN 服务器连通性
+          使用 WebRTC 测试 STUN/TURN 服务器连通性和中继功能
         </div>
       </div>
     </div>
